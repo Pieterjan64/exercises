@@ -1,5 +1,9 @@
 git remote add origin https://github.com/Pieterjan64/exercises.git
 git push -u origin master
 
+touch exercise1.txt
+git add *.txt
+git commit -m exercise1
+
 git checkout master
 git push
