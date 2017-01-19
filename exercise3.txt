@@ -1,1 +1,20 @@
-UNF:
+UNF: in orde
+
+1NF: 
+patient [ patientNo (pk), FullName, WardNo, WardName ]
+drug [ DrugNo (pk), drugName, descr, dosage, method, units, startDate, finishDate ]
+
+2NF:
+patient [ patientNo (pk), FullName ]
+ward [ WardNo (pk), Wardname, bedNo ]
+drug [ DrugNo (pk), drugName, descr, dosage, method, units ]
+time [ patientNo (fk), startDate, finishDate ]
+
+3NF:
+patient [ patientNo (pk), FullName ]
+ward [ patientNo (fk), WardNo (pk), Wardname, bedNo ]
+drug [ patientNo (fk), DrugNo (pk), drugName, descr, dosage, method, units ]
+time [ patientNo (fk), startDate, finishDate ]
+
+BCNF:
+
