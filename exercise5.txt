@@ -1,0 +1,230 @@
+select guestname,guestaddress from guest join booking on guest.guestno=booking.guestno join hotel on booking.hotelno=hotel.hotelno where city="London" order by guestname;
+
++--------------+-----------------------+
+| guestname    | guestaddress          |
++--------------+-----------------------+
+| Carol Farrel | 6 Achray St, Glasgow  |
+| Joe Keogh    | 2 Fergus Dr, Aberdeen |
+| John Kay     | 56 High St, London    |
+| John Kay     | 56 High St, London    |
+| Mike Ritchie | 18 Tain St, London    |
+| Mike Ritchie | 18 Tain St, London    |
+| Tina Murphy  | 63 Well St, Glasgow   |
++--------------+-----------------------+
+7 rows in set (0.00 sec)
+
+Alternatief:
+
+select guestname, guestaddress from guest where guestaddress like "%, London";
+
++--------------+--------------------+
+| guestname    | guestaddress       |
++--------------+--------------------+
+| John Kay     | 56 High St, London |
+| Mike Ritchie | 18 Tain St, London |
++--------------+--------------------+
+2 rows in set (0.00 sec)
+
+--------------------------------------------------------------------------------------------
+
+select * from room where (type="double" or type="family") and price < 40 order by price;
+
++--------+---------+--------+-------+
+| roomno | hotelno | type   | price |
++--------+---------+--------+-------+
+|    801 | ch02    | double | 15.00 |
+|    601 | fb01    | double | 29.00 |
+|   1001 | dc01    | double | 30.00 |
+|   1101 | dc01    | family | 35.00 |
+|    701 | fb01    | family | 39.00 |
++--------+---------+--------+-------+
+5 rows in set (0.00 sec)
+
+--------------------------------------------------------------------------------------------
+
+select * from booking where dateto is NULL;
+
++---------+---------+------------+--------+--------+
+| hotelno | guestno | datefrom   | dateto | roomno |
++---------+---------+------------+--------+--------+
+| ch01    |   10006 | 2004-04-21 | NULL   |   1101 |
+| dc01    |   10003 | 2004-05-20 | NULL   |   1001 |
+| fb01    |   10001 | 2004-05-01 | NULL   |    701 |
++---------+---------+------------+--------+--------+
+3 rows in set (0.00 sec)
+
+--------------------------------------------------------------------------------------------
+
+select avg(price) as average from room;
+
++-----------+
+| average   |
++-----------+
+| 35.748333 |
++-----------+
+1 row in set (0.00 sec)
+
+--------------------------------------------------------------------------------------------
+
+select sum(price) from room where type="double";
+
++------------+
+| sum(price) |
++------------+
+|     160.00 |
++------------+
+1 row in set (0.00 sec)
+
+--------------------------------------------------------------------------------------------
+
+select * from booking where month(datefrom)=08;
+
+Empty set (0.00 sec)
+
+--------------------------------------------------------------------------------------------
+
+select type, price from hotel join room on hotel.hotelno=room.hotelno where hotelname="Grosvenor";
+
++--------+-------+
+| type   | price |
++--------+-------+
+| single | 19.00 |
+| double | 29.00 |
+| family | 39.00 |
++--------+-------+
+3 rows in set (0.01 sec)
+
+--------------------------------------------------------------------------------------------
+
+select guestname from guest join booking on guest.guestno=booking.guestno join hotel on booking.hotelno=hotel.hotelno where hotelname="Grosvenor" group by guestname;
+
++--------------+
+| guestname    |
++--------------+
+| Carol Farrel |
+| Joe Keogh    |
+| John Kay     |
+| Mike Ritchie |
++--------------+
+4 rows in set (0.00 sec)
+
+--------------------------------------------------------------------------------------------
+
+select hotelname, room.roomno, type, guest.guestno, guestname, guestaddress from room join hotel on room.hotelno=hotel.hotelno join booking on room.roomno=booking.roomno join guest on booking.guestno=guest.guestno where hotelname="Grosvenor";
+
++-----------+--------+--------+---------+--------------+-----------------------+
+| hotelname | roomno | type   | guestno | guestname    | guestaddress          |
++-----------+--------+--------+---------+--------------+-----------------------+
+| Grosvenor |    501 | single |   10001 | John Kay     | 56 High St, London    |
+| Grosvenor |    501 | single |   10005 | Carol Farrel | 6 Achray St, Glasgow  |
+| Grosvenor |    601 | double |   10002 | Mike Ritchie | 18 Tain St, London    |
+| Grosvenor |    601 | double |   10004 | Joe Keogh    | 2 Fergus Dr, Aberdeen |
+| Grosvenor |    701 | family |   10001 | John Kay     | 56 High St, London    |
++-----------+--------+--------+---------+--------------+-----------------------+
+5 rows in set (0.00 sec)
+
+--------------------------------------------------------------------------------------------
+
+select sum(price) as income from booking join hotel on booking.hotelno=hotel.hotelno join room on hotel.hotelno=room.hotelno where hotelname="Grosvenor" and curdate() between datefrom and dateto;
+
++--------+
+| income |
++--------+
+|   NULL |
++--------+
+1 row in set (0.00 sec)
+
+--------------------------------------------------------------------------------------------
+
+select hotelname, type, price, datefrom, dateto from room join hotel on room.hotelno=hotel.hotelno join booking on room.roomno=booking.roomno where hotelname="Grosvenor" and dateto < curdate();
+
++-----------+--------+-------+------------+------------+
+| hotelname | type   | price | datefrom   | dateto     |
++-----------+--------+-------+------------+------------+
+| Grosvenor | single | 19.00 | 2004-04-01 | 2004-04-08 |
+| Grosvenor | double | 29.00 | 2016-05-04 | 2004-05-29 |
+| Grosvenor | double | 29.00 | 2004-04-15 | 2004-05-15 |
+| Grosvenor | single | 19.00 | 2004-05-02 | 2004-05-07 |
++-----------+--------+-------+------------+------------+
+4 rows in set (0.00 sec)
+
+--------------------------------------------------------------------------------------------
+
+select sum(price) as lost_income from room join hotel on room.hotelno=hotel.hotelno join booking on room.roomno=booking.roomno where hotelname="Grosvenor" and dateto < curdate();
+
++-------------+
+| lost_income |
++-------------+
+|       96.00 |
++-------------+
+1 row in set (0.00 sec)
+
+--------------------------------------------------------------------------------------------
+
+select hotelname, count(*) as rooms from hotel join room on hotel.hotelno=room.hotelno where city="London" group by hotelname;
+
++---------------+-------+
+| hotelname     | rooms |
++---------------+-------+
+| Grosvenor     |     3 |
+| Omni Shoreham |     2 |
+| Phoenix Park  |     2 |
++---------------+-------+
+3 rows in set (0.00 sec)
+
+--------------------------------------------------------------------------------------------
+
+select type, count(type) as count from booking join room on booking.roomno=room.roomno group by type order by count desc;
+
++--------+-------+
+| type   | count |
++--------+-------+
+| single |     9 |
+| double |     8 |
+| family |     5 |
++--------+-------+
+3 rows in set (0.00 sec)
+
+--------------------------------------------------------------------------------------------
+
+als root:
+
+update room set price = price + (price*0.05);
+
++--------+---------+--------+-------+
+| roomno | hotelno | type   | price |
++--------+---------+--------+-------+
+|    501 | fb01    | single | 19.00 |
+|    601 | fb01    | double | 29.00 |
+|    701 | ch02    | single | 10.00 |
+|    701 | fb01    | family | 39.00 |
+|    801 | ch02    | double | 15.00 |
+|    901 | dc01    | single | 18.00 |
+|   1001 | ch01    | single | 29.99 |
+|   1001 | dc01    | double | 30.00 |
+|   1001 | fb02    | single | 58.00 |
+|   1101 | ch01    | family | 59.99 |
+|   1101 | dc01    | family | 35.00 |
+|   1101 | fb02    | double | 86.00 |
++--------+---------+--------+-------+
+12 rows in set (0.01 sec)
+
++--------+---------+--------+-------+
+| roomno | hotelno | type   | price |
++--------+---------+--------+-------+
+|    501 | fb01    | single | 19.95 |
+|    601 | fb01    | double | 30.45 |
+|    701 | ch02    | single | 10.50 |
+|    701 | fb01    | family | 40.95 |
+|    801 | ch02    | double | 15.75 |
+|    901 | dc01    | single | 18.90 |
+|   1001 | ch01    | single | 31.49 |
+|   1001 | dc01    | double | 31.50 |
+|   1001 | fb02    | single | 60.90 |
+|   1101 | ch01    | family | 62.99 |
+|   1101 | dc01    | family | 36.75 |
+|   1101 | fb02    | double | 90.30 |
++--------+---------+--------+-------+
+12 rows in set (0.00 sec)
+
+
