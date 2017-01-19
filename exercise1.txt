@@ -1,0 +1,5 @@
+git remote add origin https://github.com/Pieterjan64/exercises.git
+git push -u origin master
+
+git checkout master
+git push
