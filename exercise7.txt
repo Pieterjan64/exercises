@@ -1,0 +1,7 @@
+db.restaurants.find({},{restaurant_id:1,name:1,borough:1,cuisine:1})
+
+db.restaurants.find({borough:"Bronx"},{restaurant_id:1,name:1,borough:1,cuisine:1}).skip(5).limit(5)
+
+db.restaurants.find({grades:{$elemMatch:{score:{$gt: 90}}}},{restaurant_id:1,name:1,borough:1,cuisine:1})
+
+db.restaurants.find({cuisine:{$ne:"American"},grades:{$elemMatch:{score:{$gt: 70}}}},{restaurant_id:1,cuisine:1})
