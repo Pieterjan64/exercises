@@ -1,0 +1,18 @@
+//
+UNF: niet-genormaliseerde vorm
+
+1NF: al in orde
+
+2NF: 
+dentist [ staffNo (pk), dentistName ]
+patient [ patientNo (pk), patientName ]
+surgery [ appNo (pk), staffNo (fk), patientNo (fk), app. date, time, surgeryNo ]
+
+3NF: date en time mogen niet samen
+dentist [ staffNo (pk), dentistName ]
+patient [ patientNo (pk), patientName ]
+surgery [ appNo (pk), staffNo (fk), patientNo (fk), app. date ]
+tussen [ time, appNo ]
+time [ time, surgeryNo ]
+
+BCNF: 
