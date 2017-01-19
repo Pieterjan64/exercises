@@ -1,0 +1,92 @@
+select concat(stdFirstName, ' ', stdLastName) as name, stdCity as city, stdGPA from student where stdGPA >= 3.7;
+
++------------------+---------+--------+
+| name             | city    | stdGPA |
++------------------+---------+--------+
+| CRISTOPHER COLAN | SEATTLE |   4.00 |
+| WILLIAM PILGRIM  | BOTHELL |   3.80 |
++------------------+---------+--------+
+2 rows in set (0.00 sec)
+
+--------------------------------------------------------------------------------------------
+
+select concat(FacFirstName, ' ', FacLastName) as name, FacHireDate from faculty where year(FacHireDate) = 1999 or year(FacHireDate) = 2000;
+
+of
+
+select concat(FacFirstName, ' ', FacLastName) as name, FacHireDate from faculty where year(FacHireDate) in (1999,2000);
+
++------------------+-------------+
+| name             | FacHireDate |
++------------------+-------------+
+| CRISTOPHER COLAN | 1999-03-01  |
+| JULIA MILLS      | 2000-03-15  |
++------------------+-------------+
+2 rows in set (0.00 sec)
+
+--------------------------------------------------------------------------------------------
+
+select OfferNo, course.CourseNo, FacSSN, OffTerm, OffYear from course join offering on course.courseno=offering.courseno where (OffTerm = "FALL" and OffYear = 2005) or (OffTerm = "WINTER" and OffYear = 2006);
+
++---------+----------+-------------+---------+---------+
+| OfferNo | CourseNo | FacSSN      | OffTerm | OffYear |
++---------+----------+-------------+---------+---------+
+|    1234 | IS320    | 098-76-5432 | FALL    |    2005 |
+|    4321 | IS320    | 098-76-5432 | FALL    |    2005 |
+|    4444 | IS320    | 543-21-0987 | WINTER  |    2006 |
+|    5555 | FIN300   | 765-43-2109 | WINTER  |    2006 |
+|    5678 | IS480    | 987-65-4321 | WINTER  |    2006 |
+|    6666 | FIN450   | 987-65-4321 | WINTER  |    2006 |
++---------+----------+-------------+---------+---------+
+6 rows in set (0.00 sec)
+
+--------------------------------------------------------------------------------------------
+
+select OfferNo, course.CourseNo, OffDays, OffTime from course join offering on course.CourseNo=offering.CourseNo where (Offterm = "SPRING" and OffYear = 2006) and (crsDesc like "%DATABASE%" or crsDesc like "%PROGRAMMING%");
+
++---------+----------+---------+----------+
+| OfferNo | CourseNo | OffDays | OffTime  |
++---------+----------+---------+----------+
+|    3333 | IS320    | MW      | 08:30:00 |
+|    5679 | IS480    | TTH     | 15:30:00 |
++---------+----------+---------+----------+
+2 rows in set (0.00 sec)
+
+--------------------------------------------------------------------------------------------
+
+select OfferNo, course.CourseNo, concat(FacFirstName, ' ', FacLastName) as name from course join offering on course.CourseNo=offering.CourseNo join faculty on offering.FacSSN=faculty.FacSSN where offering.CourseNo like "%IS%" and FacRank = "ASST";
+
++---------+----------+------------------+
+| OfferNo | CourseNo | name             |
++---------+----------+------------------+
+|    1234 | IS320    | LEONARD VINCE    |
+|    3333 | IS320    | LEONARD VINCE    |
+|    4321 | IS320    | LEONARD VINCE    |
+|    5679 | IS480    | CRISTOPHER COLAN |
++---------+----------+------------------+
+4 rows in set (0.00 sec)
+
+--------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
