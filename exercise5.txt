@@ -83,7 +83,7 @@ Empty set (0.00 sec)
 
 --------------------------------------------------------------------------------------------
 
-select type, price from hotel join room on hotel.hotelno=room.hotelno where hotelname="Grosvenor";
+select type, price from room join hotel on room.hotelno=hotel.hotelno where hotelname="Grosvenor";
 
 +--------+-------+
 | type   | price |
@@ -123,6 +123,26 @@ select hotelname, room.roomno, type, guest.guestno, guestname, guestaddress from
 +-----------+--------+--------+---------+--------------+-----------------------+
 5 rows in set (0.00 sec)
 
+select hotelname, room.roomno, type, guest.guestno, guestname, guestaddress from room join hotel on room.hotelno=hotel.hotelno join booking on hotel.hotelno=booking.hotelno join guest on booking.guestno=guest.guestno where hotelname="Grosvenor" and dateto is not NULL;
+
++-----------+--------+--------+---------+--------------+-----------------------+
+| hotelname | roomno | type   | guestno | guestname    | guestaddress          |
++-----------+--------+--------+---------+--------------+-----------------------+
+| Grosvenor |    501 | single |   10001 | John Kay     | 56 High St, London    |
+| Grosvenor |    601 | double |   10001 | John Kay     | 56 High St, London    |
+| Grosvenor |    701 | family |   10001 | John Kay     | 56 High St, London    |
+| Grosvenor |    501 | single |   10002 | Mike Ritchie | 18 Tain St, London    |
+| Grosvenor |    601 | double |   10002 | Mike Ritchie | 18 Tain St, London    |
+| Grosvenor |    701 | family |   10002 | Mike Ritchie | 18 Tain St, London    |
+| Grosvenor |    501 | single |   10004 | Joe Keogh    | 2 Fergus Dr, Aberdeen |
+| Grosvenor |    601 | double |   10004 | Joe Keogh    | 2 Fergus Dr, Aberdeen |
+| Grosvenor |    701 | family |   10004 | Joe Keogh    | 2 Fergus Dr, Aberdeen |
+| Grosvenor |    501 | single |   10005 | Carol Farrel | 6 Achray St, Glasgow  |
+| Grosvenor |    601 | double |   10005 | Carol Farrel | 6 Achray St, Glasgow  |
+| Grosvenor |    701 | family |   10005 | Carol Farrel | 6 Achray St, Glasgow  |
++-----------+--------+--------+---------+--------------+-----------------------+
+12 rows in set (0.00 sec)
+
 --------------------------------------------------------------------------------------------
 
 select sum(price) as income from booking join hotel on booking.hotelno=hotel.hotelno join room on hotel.hotelno=room.hotelno where hotelname="Grosvenor" and curdate() between datefrom and dateto;
@@ -134,9 +154,13 @@ select sum(price) as income from booking join hotel on booking.hotelno=hotel.hot
 +--------+
 1 row in set (0.00 sec)
 
+KLOPT NIET => zie oplossing
+
 --------------------------------------------------------------------------------------------
 
 select hotelname, type, price, datefrom, dateto from room join hotel on room.hotelno=hotel.hotelno join booking on room.roomno=booking.roomno where hotelname="Grosvenor" and dateto < curdate();
+
+FOUT => ZIE OPLOSSING
 
 +-----------+--------+-------+------------+------------+
 | hotelname | type   | price | datefrom   | dateto     |
@@ -151,6 +175,8 @@ select hotelname, type, price, datefrom, dateto from room join hotel on room.hot
 --------------------------------------------------------------------------------------------
 
 select sum(price) as lost_income from room join hotel on room.hotelno=hotel.hotelno join booking on room.roomno=booking.roomno where hotelname="Grosvenor" and dateto < curdate();
+
+FOUT => ZIE OPLOSSING
 
 +-------------+
 | lost_income |
@@ -174,7 +200,7 @@ select hotelname, count(*) as rooms from hotel join room on hotel.hotelno=room.h
 
 --------------------------------------------------------------------------------------------
 
-select type, count(type) as count from booking join room on booking.roomno=room.roomno group by type order by count desc;
+select type, count(*) as count from booking join room on booking.roomno=room.roomno group by type order by count desc;
 
 +--------+-------+
 | type   | count |
@@ -184,6 +210,8 @@ select type, count(type) as count from booking join room on booking.roomno=room.
 | family |     5 |
 +--------+-------+
 3 rows in set (0.00 sec)
+
+KLOPT NIET (per hotel de meest geboekte)
 
 --------------------------------------------------------------------------------------------
 
