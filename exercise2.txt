@@ -1,4 +1,3 @@
-//
 UNF: niet-genormaliseerde vorm
 
 1NF: al in orde
