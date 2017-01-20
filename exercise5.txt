@@ -1,3 +1,5 @@
+> List the names and addresses of all guests in London, alphabetically ordered by  name.
+
 select guestname,guestaddress from guest join booking on guest.guestno=booking.guestno join hotel on booking.hotelno=hotel.hotelno where city="London" order by guestname;
 
 +--------------+-----------------------+
@@ -27,6 +29,8 @@ select guestname, guestaddress from guest where guestaddress like "%, London";
 
 --------------------------------------------------------------------------------------------
 
+> List all double or family rooms with a price below £40.00 per night, cheapest first.
+
 select * from room where (type="double" or type="family") and price < 40 order by price;
 
 +--------+---------+--------+-------+
@@ -42,6 +46,8 @@ select * from room where (type="double" or type="family") and price < 40 order b
 
 --------------------------------------------------------------------------------------------
 
+> List the bookings for which no date_to has been specified.
+
 select * from booking where dateto is NULL;
 
 +---------+---------+------------+--------+--------+
@@ -55,6 +61,8 @@ select * from booking where dateto is NULL;
 
 --------------------------------------------------------------------------------------------
 
+> What is the average price of a room?
+
 select avg(price) as average from room;
 
 +-----------+
@@ -65,6 +73,8 @@ select avg(price) as average from room;
 1 row in set (0.00 sec)
 
 --------------------------------------------------------------------------------------------
+
+> What is the total revenue per night from all double rooms?
 
 select sum(price) from room where type="double";
 
@@ -77,11 +87,15 @@ select sum(price) from room where type="double";
 
 --------------------------------------------------------------------------------------------
 
+> How many different guests have made bookings for August?
+
 select * from booking where month(datefrom)=08;
 
 Empty set (0.00 sec)
 
 --------------------------------------------------------------------------------------------
+
+> List the price and type of all rooms at the Grosvenor Hotel.
 
 select type, price from room join hotel on room.hotelno=hotel.hotelno where hotelname="Grosvenor";
 
@@ -96,6 +110,8 @@ select type, price from room join hotel on room.hotelno=hotel.hotelno where hote
 
 --------------------------------------------------------------------------------------------
 
+> List all guests currently staying at the Grosvenor Hotel.
+
 select guestname from guest join booking on guest.guestno=booking.guestno join hotel on booking.hotelno=hotel.hotelno where hotelname="Grosvenor" group by guestname;
 
 +--------------+
@@ -109,6 +125,8 @@ select guestname from guest join booking on guest.guestno=booking.guestno join h
 4 rows in set (0.00 sec)
 
 --------------------------------------------------------------------------------------------
+
+> List the details of all rooms at the Grosvenor Hotel, including the name of the guest staying in the room, if the room is occupied.
 
 select hotelname, room.roomno, type, guest.guestno, guestname, guestaddress from room join hotel on room.hotelno=hotel.hotelno join booking on room.roomno=booking.roomno join guest on booking.guestno=guest.guestno where hotelname="Grosvenor";
 
@@ -145,6 +163,8 @@ select hotelname, room.roomno, type, guest.guestno, guestname, guestaddress from
 
 --------------------------------------------------------------------------------------------
 
+What is the total income from bookings for the Grosvenor Hotel today?
+
 select sum(price) as income from booking join hotel on booking.hotelno=hotel.hotelno join room on hotel.hotelno=room.hotelno where hotelname="Grosvenor" and curdate() between datefrom and dateto;
 
 +--------+
@@ -157,6 +177,8 @@ select sum(price) as income from booking join hotel on booking.hotelno=hotel.hot
 KLOPT NIET => zie oplossing
 
 --------------------------------------------------------------------------------------------
+
+> List the rooms that are currently unoccupied at the Grosvenor Hotel.
 
 select hotelname, type, price, datefrom, dateto from room join hotel on room.hotelno=hotel.hotelno join booking on room.roomno=booking.roomno where hotelname="Grosvenor" and dateto < curdate();
 
@@ -174,6 +196,8 @@ FOUT => ZIE OPLOSSING
 
 --------------------------------------------------------------------------------------------
 
+> What is the lost income from unoccupied rooms at the Grosvenor Hotel?
+
 select sum(price) as lost_income from room join hotel on room.hotelno=hotel.hotelno join booking on room.roomno=booking.roomno where hotelname="Grosvenor" and dateto < curdate();
 
 FOUT => ZIE OPLOSSING
@@ -186,6 +210,8 @@ FOUT => ZIE OPLOSSING
 1 row in set (0.00 sec)
 
 --------------------------------------------------------------------------------------------
+
+> List the number of rooms in each hotel in London.
 
 select hotelname, count(*) as rooms from hotel join room on hotel.hotelno=room.hotelno where city="London" group by hotelname;
 
@@ -200,6 +226,8 @@ select hotelname, count(*) as rooms from hotel join room on hotel.hotelno=room.h
 
 --------------------------------------------------------------------------------------------
 
+> What is the most commonly booked room type for each hotel in London?
+
 select type, count(*) as count from booking join room on booking.roomno=room.roomno group by type order by count desc;
 
 +--------+-------+
@@ -213,11 +241,25 @@ select type, count(*) as count from booking join room on booking.roomno=room.roo
 
 KLOPT NIET (per hotel de meest geboekte)
 
+select hotelname, max(type) from booking join room on booking.roomno=room.roomno join hotel on room.hotelno=hotel.hotelno where city='London' group by hotelname;
+
++---------------+-----------+
+| hotelname     | max(type) |
++---------------+-----------+
+| Grosvenor     | single    |
+| Omni Shoreham | single    |
+| Phoenix Park  | single    |
++---------------+-----------+
+3 rows in set (0.00 sec)
+
 --------------------------------------------------------------------------------------------
+
+> Update the price of all rooms by 5%.
 
 als root:
 
 update room set price = price + (price*0.05);
+update room set price = price * 1.05;
 
 +--------+---------+--------+-------+
 | roomno | hotelno | type   | price |
