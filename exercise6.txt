@@ -1,3 +1,5 @@
+> Retrieve the name, city and grade point average (GPA) of students, greater than or equal to 3.7
+
 select concat(stdFirstName, ' ', stdLastName) as name, stdCity as city, stdGPA from student where stdGPA >= 3.7;
 
 +------------------+---------+--------+
@@ -9,6 +11,8 @@ select concat(stdFirstName, ' ', stdLastName) as name, stdCity as city, stdGPA f
 2 rows in set (0.00 sec)
 
 --------------------------------------------------------------------------------------------
+
+> List the name and hiring date of faculty hired in 1999 or 2000
 
 select concat(FacFirstName, ' ', FacLastName) as name, FacHireDate from faculty where year(FacHireDate) = 1999 or year(FacHireDate) = 2000;
 
@@ -26,6 +30,8 @@ select concat(FacFirstName, ' ', FacLastName) as name, FacHireDate from faculty 
 
 --------------------------------------------------------------------------------------------
 
+> List the offer number, course number and faculty Social Security number for course  offerings scheduled in fall 2005 or winter 2006
+
 select OfferNo, course.CourseNo, FacSSN, OffTerm, OffYear from course join offering on course.courseno=offering.courseno where (OffTerm = "FALL" and OffYear = 2005) or (OffTerm = "WINTER" and OffYear = 2006);
 
 +---------+----------+-------------+---------+---------+
@@ -42,6 +48,8 @@ select OfferNo, course.CourseNo, FacSSN, OffTerm, OffYear from course join offer
 
 --------------------------------------------------------------------------------------------
 
+> List the offering number, course number, days and time of offerings containing the  words 'database' or 'programming' in the course description and taught in spring  2006.
+
 select OfferNo, course.CourseNo, OffDays, OffTime from course join offering on course.CourseNo=offering.CourseNo where (Offterm = "SPRING" and OffYear = 2006) and (crsDesc like "%DATABASE%" or crsDesc like "%PROGRAMMING%");
 
 +---------+----------+---------+----------+
@@ -53,6 +61,8 @@ select OfferNo, course.CourseNo, OffDays, OffTime from course join offering on c
 2 rows in set (0.00 sec)
 
 --------------------------------------------------------------------------------------------
+
+> List the offer number, course number and name of the instructor of IS course  offerings scheduled in fall 2005 taught by assistant professors
 
 select OfferNo, course.CourseNo, concat(FacFirstName, ' ', FacLastName) as name from course join offering on course.CourseNo=offering.CourseNo join faculty on offering.FacSSN=faculty.FacSSN where offering.CourseNo like "%IS%" and FacRank = "ASST";
 
@@ -68,25 +78,166 @@ select OfferNo, course.CourseNo, concat(FacFirstName, ' ', FacLastName) as name 
 
 --------------------------------------------------------------------------------------------
 
+> Summarize the averageGPA of students by major.
 
+select stdMajor, avg(stdGPA) as avg from student group by stdMajor;
 
++----------+----------+
+| stdMajor | avg      |
++----------+----------+
+| ACCT     | 3.400000 |
+| FIN      | 2.800000 |
+| IS       | 3.233333 |
++----------+----------+
+3 rows in set (0.00 sec)
 
+--------------------------------------------------------------------------------------------
 
+> Summarize the number of offerings and unique courses by year.
 
+select OffYear, count(*) as number from course join offering on course.CourseNo=offering.CourseNo group by OffYear;
 
++---------+--------+
+| OffYear | number |
++---------+--------+
+|    2005 |      3 |
+|    2006 |     10 |
++---------+--------+
+2 rows in set (0.00 sec)
 
+--------------------------------------------------------------------------------------------
 
+> Summarize the average GPA of upper-division (junior or senior) students by major.  Only list the major with average GPA greater than 3.1.
 
+select stdMajor, avg(stdGPA) as avg from student where stdClass in ('JR','SO') group by stdMajor;
 
++----------+----------+
+| stdMajor | avg      |
++----------+----------+
+| ACCT     | 3.400000 |
+| FIN      | 2.600000 |
+| IS       | 3.700000 |
++----------+----------+
+3 rows in set (0.01 sec)
 
+--------------------------------------------------------------------------------------------
 
+> Summarize the minimum and maximum GPA of students by major and class.
 
+select stdMajor, min(stdGPA) as min, max(stdGPA) as max from student group by stdMajor;
 
++----------+------+------+
+| stdMajor | min  | max  |
++----------+------+------+
+| ACCT     | 3.30 | 3.50 |
+| FIN      | 2.50 | 3.20 |
+| IS       | 2.20 | 4.00 |
++----------+------+------+
+3 rows in set (0.00 sec)
 
+--------------------------------------------------------------------------------------------
 
+> Summarize the number of IS course offering by course description.
 
+select crsDesc, count(*) as count from course join offering on course.CourseNo=offering.CourseNo group by crsDesc;
 
++--------------------------------------+-------+
+| crsDesc                              | count |
++--------------------------------------+-------+
+| CORPORATE FINANCE                    |     1 |
+| FUNDAMENTALS OF BUSINESS PROGRAMMING |     6 |
+| FUNDAMENTALS OF DATABASE MANAGEMENT  |     2 |
+| FUNDAMENTALS OF FINANCE              |     1 |
+| PRINCIPLES OF INVESTMENTS            |     1 |
+| SYSTEMS ANALYSIS                     |     2 |
++--------------------------------------+-------+
+6 rows in set (0.00 sec)
 
+--------------------------------------------------------------------------------------------
 
+> List the GPA, name, city and state of juniors, lowest GPA first.
+
+select stdGPA, concat(stdFirstName, ' ', stdLastName) as name, stdCity, stdState from student where stdClass='JR' order by stdGPA;
+
++--------+-----------------+---------+----------+
+| stdGPA | name            | stdCity | stdState |
++--------+-----------------+---------+----------+
+|   2.50 | ROBERTO MORALES | SEATTLE | WA       |
+|   2.70 | BOB NORBERT     | BOTHELL | WA       |
+|   3.50 | CANDY KENDALL   | TACOMA  | WA       |
+|   3.60 | MARIAH DODGE    | SEATTLE | WA       |
++--------+-----------------+---------+----------+
+4 rows in set (0.00 sec)
+
+--------------------------------------------------------------------------------------------
+
+> List the unique city and state combination in the Faculty table.
+
+select distinct(FacCity), FacState from faculty;
+
++----------+----------+
+| FacCity  | FacState |
++----------+----------+
+| SEATTLE  | WA       |
+| BOTHELL  | WA       |
+| BELLEVUE | WA       |
++----------+----------+
+3 rows in set (0.00 sec)
+
+--------------------------------------------------------------------------------------------
+
+> List the student name, offering number and grade of students who have a grade >=
+3.5 in a course offering.
+
+select concat(stdFirstName, ' ', stdLastName) as name, OfferNo, EnrGrade from student join enrollment on student.stdSSN=enrollment.stdSSN where EnrGrade >= 3.5;
+
++-----------------+---------+----------+
+| name            | OfferNo | EnrGrade |
++-----------------+---------+----------+
+| CANDY KENDALL   |    1234 |     3.50 |
+| MARIAH DODGE    |    1234 |     3.80 |
+| HOMER WELLS     |    4321 |     3.50 |
+| ROBERTO MORALES |    4321 |     3.50 |
+| BOB NORBERT     |    5679 |     3.70 |
+| ROBERTO MORALES |    5679 |     3.80 |
+| MARIAH DODGE    |    6666 |     3.60 |
+| LUKE BRAZZI     |    7777 |     3.70 |
+| BOB NORBERT     |    9876 |     3.50 |
+| WILLIAM PILGRIM |    9876 |     4.00 |
++-----------------+---------+----------+
+10 rows in set (0.00 sec)
+
+--------------------------------------------------------------------------------------------
+
+> List the names of students (without duplicates) who have grades >= 3.5 in a course  offering.
+
+select distinct(concat(stdFirstName, ' ', stdLastName)) as name from student join enrollment on student.stdSSN=enrollment.stdSSN where EnrGrade >= 3.5;
+
++-----------------+
+| name            |
++-----------------+
+| CANDY KENDALL   |
+| MARIAH DODGE    |
+| HOMER WELLS     |
+| ROBERTO MORALES |
+| BOB NORBERT     |
+| LUKE BRAZZI     |
+| WILLIAM PILGRIM |
++-----------------+
+7 rows in set (0.00 sec)
+
+--------------------------------------------------------------------------------------------
+
+> List Bob Norbert's course schedule in spring 2006. For each course, list the offering  number, course number, days, location, time and faculty name.
+
+select concat(stdFirstName, ' ', stdLastName) as StdName, offering.OfferNo, course.CourseNo, OffDays, OffLocation, OffTime, concat(FacFirstName, ' ', FacLastName) as FacName from student join enrollment on student.stdSSN=enrollment.stdSSN join offering on enrollment.offerNo=offering.offerNo join faculty on offering.FacSSN=faculty.FacSSN join course on offering.CourseNo=course.CourseNo where stdLastName='Norbert' and OffTerm='SPRING' and offYear=2006;
+
++-------------+---------+----------+---------+-------------+----------+------------------+
+| StdName     | OfferNo | CourseNo | OffDays | OffLocation | OffTime  | FacName          |
++-------------+---------+----------+---------+-------------+----------+------------------+
+| BOB NORBERT |    5679 | IS480    | TTH     | BLM412      | 15:30:00 | CRISTOPHER COLAN |
+| BOB NORBERT |    9876 | IS460    | TTH     | BLM307      | 13:30:00 | LEONARD FIBON    |
++-------------+---------+----------+---------+-------------+----------+------------------+
+2 rows in set (0.00 sec)
 
 
