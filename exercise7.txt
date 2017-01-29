@@ -26,19 +26,54 @@ db.restaurants.find({cuisine:{$ne:"American"},grades:{$elemMatch:{score:{$gt: 70
 
 db.restaurants.find({borough:'Bronx'},{$or:[{cuisine:"American"},{cuisine:"Chinese"}]},{borough:1,cuisine:1})
 
+NIET JUIST (hierboven)
+JUIST (hieronder - or moet in de and - kan ook zonder and (zie solution))
+
+db.restaurants.find(
+{$and:[{borough:"Bronx"},{$or:[{cuisine:"American"},{cuisine:"Chinese"}]}]},
+{borough:1,cuisine:1}
+)
+
 --------------------------------------------------------------------------------------------
 
-> Find the restaurant Id, name, borough and cuisine for those restaurants which are not  belonging to the borough Staten Island or Queens or Bronxor Brooklyn.
+> Find the restaurant Id, name, borough and cuisine for those restaurants which are not belonging to the borough Staten Island or Queens or Bronxor Brooklyn.
 
-
+db.restaurants.find(
+{borough:{$nin:["Staten Island","Queens","Bronxor Brooklyn"]}},
+{restaurant_id:1,name:1,borough:1,cuisine:1}
+)
 
 --------------------------------------------------------------------------------------------
 
-> Find the restaurant Id, name, borough and cuisine for those restaurants which  achieved a score which is not more than 10.
+> Find the restaurant Id, name, borough and cuisine for those restaurants which achieved a score which is not more than 10.
 
+db.restaurants.find(
+{"grades.score":{$not:{$gt:10}}},
+{restaurant_id:1,name:1,borough:1,cuisine:1}
+)
 
+--------------------------------------------------------------------------------------------
 
+> Find the restaurant Id, name, and grades for those restaurants which achieved a grade of "A" and scored 11 on an ISODate "2014-08-11T00:00:00Z" among many of survey dates.
 
+db.restaurants.find(
+{"grades.grade":"A","grades.score":11,"grades.date": ISODate("2014-08-11T00:00:00Z")},
+{restaurant_id:1,name:1,grades:1}
+)
+
+--------------------------------------------------------------------------------------------
+
+> Give a list of all restaurants, ordered by cuisine alphabetically and borough in reverse  alphabetical order
+
+db.restaurants.find()
+.sort({cuisine:1},{borough:-1})
+
+--------------------------------------------------------------------------------------------
+
+> Write a query to know whether all the addresses contain a street or not.
+
+db.restaurants.find(
+{"address.street":{$exists:true}})
 
 
 
